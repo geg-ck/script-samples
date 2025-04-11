@@ -41,7 +41,7 @@ After running the script you will need to grant access again to the site for the
 #################################################################
 $AdminSiteURL = "https://contoso-admin.sharepoint.com" # SharePoint Admin Center Url
 $SiteCollAdmin = "admin@email.com" # Global or SharePoint Admin used for loging running the script.
-$AffectedUser = "affecteduser@email.com>" # Email of the affected user.
+$AffectedUser = "affecteduser@email.com" # Email of the affected user.
 $ReportMode = $true
 
 
@@ -93,7 +93,7 @@ function Remove-UserIDMismatch ($Site) {
         $User = Get-PnPUser -Identity $properties.AccountName | Where-Object { $_.Email -eq $AffectedUser -and $_.UserId.NameId -ne $UserID }
         
         If ($User.Length -ne 0) {
-            Add-ScriptLog -Color White -Msg "User with incorrect SharePoint ID $($Site.UserId.NameId) found on this site."
+            Add-ScriptLog -Color White -Msg "User with incorrect SharePoint ID $($User.UserId.NameId) found on this site."
             
             if($User.IsSiteAdmin) {                
                 if ($ReportMode -eq $false) { Remove-PnPSiteCollectionAdmin -Owners $AffectedUser -ErrorAction Stop }
@@ -134,7 +134,7 @@ catch {
 try {
     
     $properties = Get-PnPUserProfileProperty -Account $AffectedUser
-    $UserID = $properties.UserProfileProperties.SID -replace ("i:0h.f|membership|", '')
+    $UserID = $properties.SID -replace ("i:0h.f|membership|", '')
     $UserID = $UserID -replace ('@live.com', '')
     $UserID = $UserID.Trim('|')
 
